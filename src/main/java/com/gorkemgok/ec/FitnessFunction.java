@@ -5,6 +5,6 @@ package com.gorkemgok.ec;
  */
 public interface FitnessFunction<C extends Chromosome> {
 
-    double calculateFitness(C individual);
+    double calculateFitness(C chromosome);
 
 }

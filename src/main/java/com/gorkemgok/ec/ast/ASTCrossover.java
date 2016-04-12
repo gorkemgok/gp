@@ -12,14 +12,16 @@ import java.util.List;
 public class ASTCrossover implements CrossoverMethod<ASTChromosome>{
 
     public List<ASTChromosome> apply (ChromosomePair<ASTChromosome> pair) {
-        RootNode individual1 = pair.getIndividual1 ().getIndividual ();
-        RootNode individual2 = pair.getIndividual2 ().getIndividual ();
+        RootNode individual1 = pair.getIndividual1 ().getIndividual ().copy ();
+        RootNode individual2 = pair.getIndividual2 ().getIndividual ().copy ();
 
-        Node node1 = individual1.getRandomNode ();
-        Node node2 = individual2.getRandomNode (node1.getType ());
+        CrossoverPoint crossoverPoint1 = individual1.getCrossoverPoint ();
+        CrossoverPoint crossoverPoint2 = individual2.getCrossoverPoint (crossoverPoint1.getNode ().getType (), crossoverPoint1.getNode ().getDepth ());
 
-        individual1.setChildNode (node2, individual1.getChildNodeIndex (node1));
-        individual2.setChildNode (node1, individual1.getChildNodeIndex (node2));
+        if (crossoverPoint2 != null) {
+            individual1.replaceChildNode (crossoverPoint1.getNode (), crossoverPoint2.getNode ());
+            individual2.replaceChildNode (crossoverPoint2.getNode (), crossoverPoint1.getNode ());
+        }
 
         return Arrays.asList (new ASTChromosome (individual1), new ASTChromosome (individual2));
     }

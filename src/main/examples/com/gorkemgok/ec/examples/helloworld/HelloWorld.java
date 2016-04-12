@@ -19,7 +19,7 @@ public class HelloWorld {
 
         int stopGenerationCount = 1000;
 
-        double mutationProbability = 0.2;
+        double mutationProbability = 1;
 
         String targetString = "HELLO WORLD";
 

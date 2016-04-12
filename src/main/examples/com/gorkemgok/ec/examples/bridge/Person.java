@@ -1,12 +1,14 @@
 package com.gorkemgok.ec.examples.bridge;
 
+import com.gorkemgok.ec.ast.AbstractNode;
+import com.gorkemgok.ec.ast.FunctionNode;
 import com.gorkemgok.ec.ast.Node;
 import com.gorkemgok.ec.ast.NodeType;
 
 /**
  * Created by gorkemgok on 30/03/16.
  */
-public class Person implements Node {
+public class Person extends AbstractNode {
 
     private String identifier;
 
@@ -25,7 +27,51 @@ public class Person implements Node {
         return BPNodeTypes.TRM_PERSON_WITH;
     }
 
+    public void setParentNode (FunctionNode parentNode) {
+
+    }
+
+    public String getIdentifier () {
+        return identifier;
+    }
+
     public int getMoveTime () {
         return moveTime;
+    }
+
+    @Override
+    public boolean equals (Object o) {
+        if ( this == o ) {
+            return true;
+        }
+        if ( o == null || getClass () != o.getClass () ) {
+            return false;
+        }
+
+        Person person = (Person) o;
+
+        return identifier != null ? identifier.equals (person.identifier) : person.identifier == null;
+
+    }
+
+    @Override
+    public int hashCode () {
+        return identifier != null ? identifier.hashCode () : 0;
+    }
+
+    @Override
+    public String toString () {
+        return "Person{" +
+                "identifier='" + identifier + '\'' +
+                ", moveTime=" + moveTime +
+                '}';
+    }
+
+    public Person copy (){
+        return new Person(identifier, moveTime);
+    }
+
+    public int getDepth () {
+        return 1;
     }
 }

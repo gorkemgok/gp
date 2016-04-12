@@ -13,19 +13,19 @@ public class StringFitnessFunction implements FitnessFunction<StringChromosome>{
         this.targetString = targetString;
     }
 
-    public double calculateFitness (StringChromosome individual) {
+    public double calculateFitness (StringChromosome chromosome) {
         double fitness = 0;
-        String actualString = individual.getIndividual ();
+        String actualString = chromosome.getIndividual ();
         if (targetString.length () == actualString.length ()){
             fitness++;
         }
         int minLen = Math.min (targetString.length (), actualString.length ());
         for ( int i = 0; i < minLen; i++ ) {
-            if (individual.getIndividual ().charAt (i) == targetString.charAt (i)){
+            if ( chromosome.getIndividual ().charAt (i) == targetString.charAt (i)){
                 fitness++;
             }
         }
-        individual.setFitnessValue (fitness);
+        chromosome.setFitnessValue (fitness);
         return fitness;
     }
 }

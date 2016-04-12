@@ -1,47 +1,77 @@
 package com.gorkemgok.ec.ast;
 
+import com.gorkemgok.ec.Util;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by gorkemgok on 30/03/16.
  */
-public class RootNode implements FunctionNode{
+public class RootNode extends AbstractFunctionNode {
 
-    private List<FunctionNode> functionNode;
+    public static final NodeType ROOT_NODE = new NodeType (-1);
 
-    public int totalChildNodeCount () {
-        return 0;
+    private List<Node> nodes = new ArrayList<Node>();
+
+    public RootNode (Node... nodes) {
+        for ( Node node :
+                nodes ) {
+            this.nodes.add (node);
+            node.setParentNode (this);
+        }
     }
 
-    public Node getChildNode (int index) {
-        return null;
-    }
-
-    public void setChildNode (Node newNode, int index) {
-
-    }
-
-    public int getChildNodeIndex (Node node) {
-        return 0;
+    public boolean replaceChildNode (Node oldNode, Node newNode) {
+        newNode.setParentNode (this);
+        int index = nodes.indexOf (oldNode);
+        if (index > -1){
+            nodes.set (index, newNode);
+            return true;
+        }else{
+            for ( Node node :
+                    nodes ) {
+                if (node instanceof FunctionNode){
+                    if (((FunctionNode)node).replaceChildNode (oldNode, newNode)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public NodeType getType () {
-        return null;
+        return ROOT_NODE;
     }
 
-    public List<? extends Node> getAllNodes () {
-        return null;
+    public List<Node> getNestedNodes () {
+        return Util.getAllNestedNodes (nodes);
     }
 
-    public List<? extends Node> getNodes (NodeType type) {
-        return null;
+    @Override
+    public String toString () {
+        return "RootNode{" +
+                "nodes=" + nodes +
+                '}';
     }
 
-    public Node getRandomNode (NodeType type) {
-        return null;
+    public RootNode copy () {
+        RootNode rootNode = new RootNode ();
+        for ( Node node :
+                nodes ) {
+            rootNode.nodes.add (node.copy ());
+        }
+        return rootNode;
     }
 
-    public Node getRandomNode () {
-        return null;
+    public int getDepth () {
+        int depth = 0;
+        for ( Node node :
+                nodes ) {
+            depth = Math.max (node.getDepth (), depth);
+        }
+        return depth + 1;
     }
 }

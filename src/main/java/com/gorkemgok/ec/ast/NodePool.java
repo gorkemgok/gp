@@ -7,12 +7,19 @@ import java.util.List;
  */
 public interface NodePool {
 
-    List<? extends Node> getAllNodes();
+    int getDepth();
 
-    List<? extends Node> getNodes(NodeType type);
+    List<? extends Node> getNestedNodes ();
 
-    Node getRandomNode(NodeType type);
+    List<? extends Node> getNestedNodes (NodeType type);
 
-    Node getRandomNode();
+    List<? extends Node> getNestedNodes (NodeType type, int desiredDepth);
+
+    CrossoverPoint getCrossoverPoint();
+
+    CrossoverPoint getCrossoverPoint (NodeType type);
+
+    CrossoverPoint getCrossoverPoint (NodeType type, int desiredDepth);
+
 }
 

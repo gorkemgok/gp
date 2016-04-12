@@ -19,7 +19,7 @@ public class GeneticProgram {
 
     private final MutationMethod mutationMethod;
 
-    private final FitnessFunction<Chromosome> fitnessFunction;
+    private final FitnessFunction fitnessFunction;
 
     private final StopCondition stopCondition;
 
@@ -51,14 +51,17 @@ public class GeneticProgram {
                     }
                 }
             }
-            //Select Individual pairs for sex
-            List<ChromosomePair<Chromosome>> chromosomePairList = selectionMethod.select(population);
 
             //Apply crossover to Individual pairs
             List<Chromosome> offsetChromosomesList = new ArrayList<Chromosome>(population.getPopulationSize());
-            for (ChromosomePair<Chromosome> chromosomePair : chromosomePairList){
+            for (int i = 0; i < population.getPopulationSize (); i++){
+                //Select Individual pairs for sex
+                ChromosomePair<Chromosome> chromosomePair = selectionMethod.selectOne(population);
                 List<Chromosome> newBornChromosomes = crossoverMethod.apply(chromosomePair);
-                newBornChromosomes.get (0).mutate (mutationMethod, mutationProbability );
+                if (mutationMethod != null) {
+                    newBornChromosomes.get (0)
+                                      .mutate (mutationMethod, mutationProbability);
+                }
                 offsetChromosomesList.add(newBornChromosomes.get (0));
             }
 

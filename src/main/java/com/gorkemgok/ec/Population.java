@@ -2,6 +2,7 @@ package com.gorkemgok.ec;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,8 +17,16 @@ public class Population<C extends Chromosome> implements Iterable<C>{
 
     private List<C> individuals;
 
+    private final Comparator<Chromosome> comparator;
+
     public Population(List<C> individuals) {
         this.individuals = individuals;
+        this.comparator = Comparators.BIGGER_IS_FITTER;
+    }
+
+    public Population (List<C> individuals, Comparator<Chromosome> comparator) {
+        this.individuals = individuals;
+        this.comparator = comparator;
     }
 
     public void replacePopulation(List<C> newIndividuals){
@@ -46,7 +55,7 @@ public class Population<C extends Chromosome> implements Iterable<C>{
     }
 
     public boolean compareWithFittest(C chromosome){
-        if (fittestChromosome == null || chromosome.getFitnessValue () > fittestChromosome.getFitnessValue ()){
+        if (fittestChromosome == null || comparator.compare (fittestChromosome, chromosome) == -1){
             fittestChromosome = chromosome;
             return true;
         }

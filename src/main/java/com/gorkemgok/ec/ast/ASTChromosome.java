@@ -13,4 +13,8 @@ public class ASTChromosome extends AbstractChromosome<RootNode> {
         super (individual);
     }
 
+    @Override
+    public String toString () {
+        return getIndividual ().toString ();
+    }
 }

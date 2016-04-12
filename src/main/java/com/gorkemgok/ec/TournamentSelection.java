@@ -7,10 +7,18 @@ import java.util.*;
  */
 public class TournamentSelection implements SelectionMethod{
 
-    private int tournamentChromosomeCount;
+    private final Comparator<Chromosome> comparator;
+
+    private final int tournamentChromosomeCount;
 
     public TournamentSelection (int tournamentChromosomeCount) {
         this.tournamentChromosomeCount = tournamentChromosomeCount;
+        this.comparator = Comparators.BIGGER_IS_FITTER;
+    }
+
+    public TournamentSelection (int tournamentChromosomeCount, Comparator<Chromosome> comparator) {
+        this.tournamentChromosomeCount = tournamentChromosomeCount;
+        this.comparator = comparator;
     }
 
     public List<ChromosomePair<Chromosome>> select (Population population) {
@@ -27,12 +35,18 @@ public class TournamentSelection implements SelectionMethod{
         return selectedChromosomes;
     }
 
-    public ChromosomePair<Chromosome> fight(List<Chromosome> chromosomeList){
-        Collections.sort (chromosomeList, new Comparator<Chromosome> () {
-            public int compare (Chromosome o1, Chromosome o2) {
-                return o1.getFitnessValue () > o2.getFitnessValue () ? -1 : o1.getFitnessValue () < o2.getFitnessValue () ? 1 : 0;
-            }
-        });
+    public ChromosomePair<Chromosome> selectOne (Population population) {
+        int populationSize = population.getPopulationSize ();
+        List<Chromosome> chromosomesToFight = new ArrayList<Chromosome> ();
+        chromosomesToFight.clear ();
+        for ( int j = 0; j < tournamentChromosomeCount; j++ ) {
+            chromosomesToFight.add (population.getChromosome (Util.randomInt (populationSize - 1)));
+        }
+        return fight (chromosomesToFight);
+    }
+
+    private ChromosomePair<Chromosome> fight(List<Chromosome> chromosomeList){
+        Collections.sort (chromosomeList, comparator);
 
         return new ChromosomePair<Chromosome> (chromosomeList.get (0), chromosomeList.get (1));
     }

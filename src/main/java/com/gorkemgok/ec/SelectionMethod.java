@@ -8,4 +8,6 @@ import java.util.List;
 public interface SelectionMethod {
 
     <C extends Chromosome> List<ChromosomePair<C>> select(Population<C> population);
+
+    <C extends Chromosome> ChromosomePair<C> selectOne(Population<C> population);
 }

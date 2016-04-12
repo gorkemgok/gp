@@ -11,6 +11,8 @@ public class BPNodeTypes {
 
     public static final NodeType FN_CROSS = new NodeType (10);
 
+    public static final NodeType FN_STOP = new NodeType (13);
+
     public static final NodeType FN_PERSON_SELECTOR = new NodeType (11);
 
     public static final NodeType TRM_PERSON_WITH = new NodeType (12);

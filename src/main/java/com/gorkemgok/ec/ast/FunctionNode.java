@@ -5,12 +5,14 @@ package com.gorkemgok.ec.ast;
  */
 public interface FunctionNode extends Node, NodePool {
 
-    int totalChildNodeCount ();
-
     Node getChildNode (int index);
 
-    void setChildNode (Node newNode, int index);
+    boolean replaceChildNode(Node oldNode, Node newNode);
 
-    int getChildNodeIndex (Node node);
+    void notifyObserversToAdd(Node node);
+
+    void notifyObserversToRemove(Node node);
+
+    void notifyObserversToReplace(Node oldNode, Node newNode);
 
 }

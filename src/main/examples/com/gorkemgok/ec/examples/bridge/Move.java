@@ -1,16 +1,16 @@
 package com.gorkemgok.ec.examples.bridge;
 
-import com.gorkemgok.ec.ast.FunctionNode;
-import com.gorkemgok.ec.ast.Node;
-import com.gorkemgok.ec.ast.NodeType;
+import com.gorkemgok.ec.Util;
+import com.gorkemgok.ec.ast.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Created by gorkemgok on 30/03/16.
  */
-public class Move implements FunctionNode{
+public class Move extends AbstractFunctionNode implements FunctionNode {
 
     public enum Type{
         STOP,
@@ -19,7 +19,7 @@ public class Move implements FunctionNode{
 
     private Type type;
 
-    private SelectPerson personSelector;
+    private PersonSelector personSelector;
 
     private Move nextCross;
 
@@ -33,59 +33,74 @@ public class Move implements FunctionNode{
 
     public void setNextMove (Move nextCross) {
         this.nextCross = nextCross;
+        nextCross.setParentNode (this);
     }
 
-    public SelectPerson getPersonSelector () {
+    public PersonSelector getPersonSelector () {
         return personSelector;
     }
 
-    public void setPersonSelector (SelectPerson personSelector) {
+    public void setPersonSelector (PersonSelector personSelector) {
         this.personSelector = personSelector;
+        personSelector.setParentNode (this);
     }
 
     public NodeType getType () {
-        return BPNodeTypes.FN_CROSS;
-    }
-
-    public int totalChildNodeCount () {
-        return 1;
-    }
-
-    public Node getChildNode (int index) {
-        if (index == 0){
-            return personSelector.selectPerson ();
+        if (type == Type.CROSS) {
+            return BPNodeTypes.FN_CROSS;
+        }else {
+            return BPNodeTypes.FN_STOP;
         }
-        throw new NoSuchElementException ("No Node for index "+index);
     }
 
-    public void setChildNode (Node newNode, int index) {
-        if (index == 0){
-            personSelector = (SelectPerson) newNode;
+    public Type getMoveType(){
+        return type;
+    }
+
+    public List<Node> getNestedNodes () {
+        return Util.getAllNestedNodes (Arrays.asList (nextCross, personSelector));
+    }
+
+    public boolean replaceChildNode (Node oldNode, Node newNode) {
+        if (type.equals (Type.STOP)){
+            return false;
         }
-        throw new NoSuchElementException ("No Node to set for index "+index);
+        if (oldNode.equals (nextCross)){
+            nextCross = (Move)newNode;
+            return true;
+        }else if (oldNode.equals (personSelector)){
+            personSelector = (PersonSelector)newNode;
+            return true;
+        }else if (!nextCross.replaceChildNode (oldNode, newNode)){
+            return personSelector.replaceChildNode (oldNode, newNode);
+        }else {
+            return true;
+        }
     }
 
-    public int getChildNodeIndex (Node node) {
-        if (node == personSelector) {
+    @Override
+    public String toString () {
+        return "Move{" +
+                "type=" + type +
+                ", personSelector=" + personSelector +
+                ", nextCross=" + nextCross +
+                '}';
+    }
+
+    public Move copy () {
+        Move move = new Move(type);
+        if (personSelector != null) move.setPersonSelector (personSelector.copy ());
+        if (nextCross != null) move.setNextMove (nextCross.copy ());
+        return move;
+    }
+
+    public int getDepth () {
+        if (type == Type.STOP){
             return 0;
+        }else{
+            int depth = Math.max (nextCross.getDepth (), personSelector.getDepth ());
+            return depth + 1;
         }
-        throw new NoSuchElementException ("No Node found");
     }
 
-
-    public List<Node> getAllNodes () {
-        return null;
-    }
-
-    public List<Node> getNodes (NodeType type) {
-        return null;
-    }
-
-    public Node getRandomNode (NodeType type) {
-        return null;
-    }
-
-    public Node getRandomNode () {
-        return null;
-    }
 }
